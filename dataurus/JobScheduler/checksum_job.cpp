@@ -31,6 +31,15 @@ int JobCheckSumSelfJoin::Run() {
 }
 
 
+uint64_t inter_checksum_kernel2(uint64_t *values, tuple_t * tups, unsigned *rids, 
+        unsigned relnum, unsigned size, unsigned idx)
+{
+    uint64_t ret = 0;
+    for (size_t i = 0; i < size; i++) {
+        ret += values[rids[(tups[i].key)*relnum + idx]];
+    }
+    return ret;
+}
 
 
 int JobCheckSumInterInter::Run () {
@@ -50,9 +59,10 @@ int JobCheckSumInterInter::Run () {
         uint64_t * values = p.values;
 
         /* Loop the 2d array to find checksums */
-        for (size_t i = 0; i < size; i++) {
-            csums[index] += values[rids[(tups[i].key)*relnum + idx]];
-        }
+        //for (size_t i = 0; i < size; i++) {
+        //    csums[index] += values[rids[(tups[i].key)*relnum + idx]];
+        //}
+        csums[index] += inter_checksum_kernel2(values, tups, rids, relnum, size, idx);
         index++;
     }
 
@@ -89,9 +99,10 @@ int JobCheckSumInterNonInter::Run () {
         uint64_t * values = p.values;
 
         /* Loop the 2d array to find checksums */
-        for (size_t i = 0; i < size; i++) {
-            csums[index] += values[rids[(tups[i].key)*relnum + idx]];
-        }
+        //for (size_t i = 0; i < size; i++) {
+        //    csums[index] += values[rids[(tups[i].key)*relnum + idx]];
+        //}
+        csums[index] += inter_checksum_kernel2(values, tups, rids, relnum, size, idx);
         index++;
     }
 
