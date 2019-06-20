@@ -7,3 +7,5 @@ mkdir -p build/release
 cd build/release
 cmake -DCMAKE_BUILD_TYPE=Release -DFORCE_TESTS=OFF ../..
 make -j8
+cd -
+cp build/release/Joiner ../../workloads/3rd-ref
